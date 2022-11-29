@@ -1,4 +1,4 @@
-import { Container, Grid, IconButton, makeStyles,Theme } from "@material-ui/core";
+import { Container, Grid, IconButton, makeStyles,Theme,Card,CardContent } from "@material-ui/core";
 import React,{useEffect,useContext,useState} from "react";
 import sample_img from "../../img/sample.jpg";
 import { AuthContext } from "App";
@@ -41,7 +41,6 @@ const Home: React.FC = () =>{
         },
       };
 
-
     const handleGetCurrentUser = async() =>{
         try{
             const res = await getCurrentUser()
@@ -81,7 +80,11 @@ const Home: React.FC = () =>{
                         </table>
                     </Grid>
                     <Grid item xs ={8} className={styles.item}>
-                        <div>bb</div>
+                        <Card>
+                            <CardContent>
+                                To Do
+                            </CardContent>
+                        </Card>
                     </Grid>
                 </Grid>
             </>

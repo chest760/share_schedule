@@ -18,13 +18,15 @@ export const AuthContext = createContext({} as {
   setLoginstate:React.Dispatch<React.SetStateAction<boolean>>
   currentUser: User | undefined
   setCurrentUser:React.Dispatch<React.SetStateAction<User | undefined>>
+  userid: number
+  setUserid:React.Dispatch<React.SetStateAction<number>>
 })
 
 const App: React.FC = () => {
   const [loading,setLoading] = useState<boolean>(true)
   const [loginstate,setLoginstate] = useState<boolean>(false)
   const [currentUser,setCurrentUser] = useState<User | undefined>()
-  const [userid,setUserid] = useState<any>(0)
+  const [userid,setUserid] = useState<number>(0)
 
 
   const handleuser= async() =>{
@@ -63,7 +65,7 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <AuthContext.Provider value={{ loading, setLoading, loginstate, setLoginstate, currentUser, setCurrentUser}}>
+      <AuthContext.Provider value={{ loading, setLoading, loginstate, setLoginstate, currentUser ,setCurrentUser,userid,setUserid}}>
         <Layout>
           <Routes>
             <Route path="/signup" element={<Signup/>}/>
@@ -74,7 +76,7 @@ const App: React.FC = () => {
                 <Routes>
                   <Route path="/calender" element={<Calendar/>} />
                   <Route path="/edit" element={<Edit/>} />
-                  <Route path="/home/:id" element={<Home/>} />
+                  <Route path={`/home/${userid}`} element={<Home/>} />
                   <Route path="/*" element={<Notfound/>} />
                 </Routes>
               </Approval>

@@ -34,7 +34,7 @@ const Header: React.FC = () =>{
       
       
 
-    const {loading,setLoading,loginstate,setLoginstate} = useContext(AuthContext)
+    const {loading,setLoading,loginstate,setLoginstate,userid} = useContext(AuthContext)
 
     const handleLogout = async (event:React.MouseEvent<HTMLButtonElement,MouseEvent>) => {
         try{
@@ -62,7 +62,7 @@ const Header: React.FC = () =>{
                         <Button
                         className={styles.changebutton}
                         component ={Link}
-                        to="/"
+                        to={`/home/${userid}`}
                         >
                             Home
                         </Button>

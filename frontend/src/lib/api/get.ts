@@ -4,7 +4,7 @@ import Cookies from "js-cookie"
 import {CalendarData} from "utils";
 
 
-export const Eventregister = (data: CalendarData) =>{
+export const registerEvent = (data: CalendarData) =>{
     return client.post("/calendar", data,{headers:{
         "access-token": Cookies.get("_access_token"),
         "client": Cookies.get("_client"),
@@ -18,4 +18,20 @@ export const getEvent = () =>{
         "client": Cookies.get("_client"),
         "uid": Cookies.get("_uid")
     }})
+}
+
+export const updateEvent = (data: CalendarData, id: string) => {
+    return  client.put(`/calendar/${id}`,data, {headers:{
+            "access-token": Cookies.get("_access_token"),
+            "client": Cookies.get("_client"),
+            "uid": Cookies.get("_uid")
+        }})
+}
+
+export const deleteEvent = (id: string) => {
+    return  client.delete(`/calendar/${id}`, {headers:{
+            "access-token": Cookies.get("_access_token"),
+            "client": Cookies.get("_client"),
+            "uid": Cookies.get("_uid")
+        }})
 }

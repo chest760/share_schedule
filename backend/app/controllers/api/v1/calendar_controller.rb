@@ -28,6 +28,23 @@ class Api::V1::CalendarController < ApplicationController
         end
     end
 
+    def update
+        data = Calendar.find(params[:id])
+        if data.uid == current_api_v1_user.id
+            data.update(user_params)
+            render json:{data:data}
+        end
+    end
+
+    def destroy
+        data = Calendar.find(params[:id])
+        if data.uid == current_api_v1_user.id
+            data.destroy
+            render json:{data:data}
+        end
+    end
+
+
     private
 
     # def set_current_user

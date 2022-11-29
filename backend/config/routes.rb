@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :test, only: [:index]
-      resources :calendar, only: [:show, :create, :index]
+      resources :calendar, only: [:show, :create, :index, :update, :destroy]
       
 
       mount_devise_token_auth_for 'User', at: 'auth', controllers: {
