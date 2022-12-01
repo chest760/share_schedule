@@ -182,7 +182,7 @@ const Calendar:React.FC = () =>{
     }
 
 
-    const handleselectdata = async (selectionInfo:DateSelectArg) =>{
+    const handleselectdate = async (selectionInfo:DateSelectArg) =>{
         console.log('selectionInfo: ', selectionInfo); // 選択した範囲の情報をconsoleに出力   
         setSelectStartData(selectionInfo.startStr)
         setSelectEndData(selectionInfo.endStr)
@@ -210,9 +210,10 @@ const Calendar:React.FC = () =>{
             weekends={true}
             dayCellContent = {(e)=>{e.dayNumberText = e.dayNumberText.replace('日', '');}}
             selectable = {true}
-            select = {(e) => handleselectdata(e)}
+            select = {(e) => handleselectdate(e)}
             events = {events}
             eventClick={(e)=>{handleClickEvent(e)}}
+            longPressDelay = {0}
             />
         )
     },[events])

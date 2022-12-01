@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate} from "react-router-dom"
 import AppBar from "@material-ui/core/AppBar"
 import { makeStyles } from "@material-ui/core";
@@ -34,7 +34,7 @@ const Header: React.FC = () =>{
       
       
 
-    const {loading,setLoading,loginstate,setLoginstate,userid} = useContext(AuthContext)
+    const {loading,setLoading,loginstate,setLoginstate,userid,setUserid} = useContext(AuthContext)
 
     const handleLogout = async (event:React.MouseEvent<HTMLButtonElement,MouseEvent>) => {
         try{
@@ -46,6 +46,7 @@ const Header: React.FC = () =>{
                 Cookies.remove("_client")
                 Cookies.remove("_uid")
                 setLoginstate(false)
+                setUserid(0)
                 navigate("/login")
             }
         }catch(err){
@@ -56,7 +57,6 @@ const Header: React.FC = () =>{
     const ChangeButton = () =>{
         if(!loading){
             if(loginstate){
-                console.log("AAA")
                 return(
                     <>
                         <Button
@@ -69,9 +69,16 @@ const Header: React.FC = () =>{
                         <Button
                         className={styles.changebutton}
                         component ={Link}
-                        to="/calender"
+                        to={`/calendar/${userid}`}
                         >
                             Calendar
+                        </Button>
+                        <Button
+                        className={styles.changebutton}
+                        component ={Link}
+                        to={`/room/${userid}`}
+                        >
+                            Room
                         </Button>
                         <Button
                         className={styles.changebutton}
@@ -114,13 +121,17 @@ const Header: React.FC = () =>{
             )
         }
     }
+    
+
+
+
 
     return(
         <AppBar className={styles.container}>
             <Toolbar>
                 <Typography 
                 component={Link}
-                to="/"
+                to="/home"
                 variant="h6"
                 className={styles.app}
                 >

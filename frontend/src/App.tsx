@@ -10,6 +10,7 @@ import Notfound from "components/views/Notfound"
 import Layout from "components/layouts/Layout"
 import Calendar from "components/views/Calendar"
 import Edit from "components/views/Edit"
+import  Room  from "components/views/Room"
 
 export const AuthContext = createContext({} as {
   loading:boolean
@@ -31,11 +32,14 @@ const App: React.FC = () => {
 
   const handleuser= async() =>{
     try {
+      
       const res = await getCurrentUser()
       if (res?.status === 200){
+        
         setLoginstate(true)
         setCurrentUser(res?.data.currentUser)
         setUserid(res?.data.currentUser.id)
+        console.log("AAAAAAA")
       } else {
         console.log("No current user")
       }
@@ -46,15 +50,15 @@ const App: React.FC = () => {
   }
     
   useEffect(() => {
+    console.log("AAA")
     handleuser()
-  }, [setCurrentUser])
+  }, [])
 
   const Approval = ({children}: {children: React.ReactElement }) => {
     if (!loading){
       if(loginstate){
         return children
       }else{
-        console.log("AAA")
         return <Routes><Route path="/*" element={<Navigate to="/login"/>}/></Routes>
       }
     }else{
@@ -71,11 +75,12 @@ const App: React.FC = () => {
             <Route path="/signup" element={<Signup/>}/>
             <Route path="/login" element={<Login/>}/>
             <Route path="/about" element={<About/>}/>
-            <Route path ="/*"element={
+            <Route path ="/*" element={
               <Approval>
                 <Routes>
-                  <Route path="/calender" element={<Calendar/>} />
-                  <Route path="/edit" element={<Edit/>} />
+                  <Route path={`/calendar/${userid}`} element={<Calendar/>} />
+                  <Route path={`/room/${userid}`} element={<Room/>} />
+                  <Route path={`/edit/${userid}`} element={<Edit/>} />
                   <Route path={`/home/${userid}`} element={<Home/>} />
                   <Route path="/*" element={<Notfound/>} />
                 </Routes>

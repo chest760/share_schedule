@@ -1,11 +1,12 @@
 import { Button, Card,CardContent,CardHeader, makeStyles,Theme } from "@material-ui/core";
 import {TextField} from "@material-ui/core";
-import React,{useContext,useState} from "react";
+import React,{useCallback, useContext,useEffect,useState} from "react";
 import { AuthContext } from "App";
 import { LoginData } from "utils/index";
 import { LogIn } from "lib/api/auth";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+
 
 
 const useStyles = makeStyles((theme:Theme)=>({
@@ -28,11 +29,16 @@ const useStyles = makeStyles((theme:Theme)=>({
 }))
 
 const Login: React.FC = () =>{
+
+    async function sleep(ms: number) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
     const styles = useStyles()
     const navigate = useNavigate()
     const[name,setName] = useState<string>("")
     const[password,setPassword] = useState<string>("")
-    const {setLoginstate,setCurrentUser} = useContext(AuthContext)
+    const {setLoginstate,setCurrentUser,userid,setUserid,loginstate} = useContext(AuthContext)
 
 
     const handleLogin = async(e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
@@ -48,12 +54,18 @@ const Login: React.FC = () =>{
             const res = await LogIn(data)
 
             if(res.status === 200){
+                console.log(res.data.data.id)
                 Cookies.set("_access_token", res.headers["access-token"]||"")
                 Cookies.set("_client", res.headers["client"]||"")
                 Cookies.set("_uid", res.headers["uid"]||"")
                 setLoginstate(true)
                 setCurrentUser(res.data.data)
-                navigate(`/home/${res.data.data.id}`)
+                setUserid(res.data.data.id)
+                
+                
+                
+                
+                
             }else{
 
             }
@@ -62,6 +74,29 @@ const Login: React.FC = () =>{
             console.log(error)
         }
     }
+
+     useEffect (()=>{
+        console.log("id")
+        console.log(userid)
+        if (userid>0){
+            navigate(`/home/${userid}`)
+            console.log("CCCC")
+        }
+    },[userid])
+
+
+    //     useEffect (()=>{
+    //     const data = async() =>{
+    //     await sleep(2000)
+    //     console.log("id")
+    //     console.log(userid)
+    //     if (userid>0){
+    //         navigate(`/home/${userid}`)
+    //         console.log("CCCC")
+    //     }}
+    //     data()
+    // },[loginstate])
+
 
     return(
         <form noValidate autoComplete="off">
@@ -81,7 +116,7 @@ const Login: React.FC = () =>{
                     />
                     <TextField
                     required
-                    label = "passsword"
+                    label = "password"
                     fullWidth
                     margin="normal"
                     onChange={(event) => {setPassword(event.target.value)}}

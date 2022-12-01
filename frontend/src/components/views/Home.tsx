@@ -44,7 +44,6 @@ const Home: React.FC = () =>{
     const handleGetCurrentUser = async() =>{
         try{
             const res = await getCurrentUser()
-            console.log("ABC")
             console.log(res?.data)
             if (res?.status === 200){
                 setName(res?.data.currentUser.name)
