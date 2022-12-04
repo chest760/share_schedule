@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState,useEffect } from "react";
 import Cookies from "js-cookie";
 import { useNavigate} from "react-router-dom"
 import { Card,CardHeader, CardContent, makeStyles, Theme, Button} from "@material-ui/core";
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme:Theme)=>({
 const Signup: React.FC = () =>{
     const styles = useStyles()
     const navigate = useNavigate();
-    const {setLoginstate,setCurrentUser} = useContext(AuthContext)
+    const {setLoginstate,setCurrentUser,userid,setUserid} = useContext(AuthContext)
     const [error, setError] = useState<boolean>(false)
     const [name, setName] = useState<string>("")
     const [email,setEmail] = useState<string>("")
@@ -64,8 +64,9 @@ const Signup: React.FC = () =>{
                 
                 setLoginstate(true)
                 setCurrentUser(res.data.data)
+                setUserid(res.data.data.id)
                 console.log(res.data.data)
-                navigate(`/home/${res.data.data.id}`)
+               
             }else{
                 console.log("DDD")
             }
@@ -75,6 +76,15 @@ const Signup: React.FC = () =>{
             console.log("FFF")
         }
     }
+
+    useEffect (()=>{
+        console.log("id")
+        console.log(userid)
+        if (userid>0){
+            navigate(`/home/${userid}`)
+            console.log("CCCC")
+        }
+    },[userid])
 
     return(
         <form noValidate autoComplete="off">

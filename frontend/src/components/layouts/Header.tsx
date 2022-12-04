@@ -76,7 +76,7 @@ const Header: React.FC = () =>{
                         <Button
                         className={styles.changebutton}
                         component ={Link}
-                        to={`/room/${userid}`}
+                        to={`/rooms/${userid}`}
                         >
                             Room
                         </Button>

@@ -10,6 +10,7 @@ import Notfound from "components/views/Notfound"
 import Layout from "components/layouts/Layout"
 import Calendar from "components/views/Calendar"
 import Edit from "components/views/Edit"
+import  Rooms  from "components/views/Rooms"
 import  Room  from "components/views/Room"
 
 export const AuthContext = createContext({} as {
@@ -23,11 +24,21 @@ export const AuthContext = createContext({} as {
   setUserid:React.Dispatch<React.SetStateAction<number>>
 })
 
+export const Context = createContext({} as {
+
+  roomid: number
+  setRoomid:React.Dispatch<React.SetStateAction<number>>
+  room_open: boolean
+  setRoom_Open:React.Dispatch<React.SetStateAction<boolean>>
+})
+
 const App: React.FC = () => {
   const [loading,setLoading] = useState<boolean>(true)
   const [loginstate,setLoginstate] = useState<boolean>(false)
   const [currentUser,setCurrentUser] = useState<User | undefined>()
   const [userid,setUserid] = useState<number>(0)
+  const [roomid, setRoomid] = useState<number>(0)
+  const [room_open, setRoom_Open] = useState<boolean>(false)
 
 
   const handleuser= async() =>{
@@ -39,7 +50,7 @@ const App: React.FC = () => {
         setLoginstate(true)
         setCurrentUser(res?.data.currentUser)
         setUserid(res?.data.currentUser.id)
-        console.log("AAAAAAA")
+        
       } else {
         console.log("No current user")
       }
@@ -50,12 +61,13 @@ const App: React.FC = () => {
   }
     
   useEffect(() => {
-    console.log("AAA")
+  
     handleuser()
   }, [])
 
   const Approval = ({children}: {children: React.ReactElement }) => {
     if (!loading){
+     
       if(loginstate){
         return children
       }else{
@@ -67,9 +79,21 @@ const App: React.FC = () => {
     }
   }
 
+  const EnterRoom = ({children}:{children: React.ReactElement }) =>{
+    console.log("aaaaaaaaaa")
+    console.log(roomid)
+    if(roomid != 0){
+      return children
+    }else{
+      return <Routes><Route path="/*" element={<Navigate to={`/home/${userid}`}/>}/></Routes>
+    }
+
+  }
+
   return (
     <Router>
       <AuthContext.Provider value={{ loading, setLoading, loginstate, setLoginstate, currentUser ,setCurrentUser,userid,setUserid}}>
+      <Context.Provider value={{roomid,setRoomid,room_open,setRoom_Open}}>
         <Layout>
           <Routes>
             <Route path="/signup" element={<Signup/>}/>
@@ -77,17 +101,26 @@ const App: React.FC = () => {
             <Route path="/about" element={<About/>}/>
             <Route path ="/*" element={
               <Approval>
+                {/* <Context.Provider value={{roomid,setRoomid,room_open,setRoom_Open}}> */}
                 <Routes>
                   <Route path={`/calendar/${userid}`} element={<Calendar/>} />
-                  <Route path={`/room/${userid}`} element={<Room/>} />
+                  <Route path={`/rooms/${userid}`} element={<Rooms/>} />
                   <Route path={`/edit/${userid}`} element={<Edit/>} />
                   <Route path={`/home/${userid}`} element={<Home/>} />
-                  <Route path="/*" element={<Notfound/>} />
+                  <Route path={`/*`} element={
+                    <EnterRoom>
+                      <Routes>
+                        <Route path={`/room/${roomid}`} element={<Room/>} />
+                      </Routes>
+                    </EnterRoom>
+                   }/>
                 </Routes>
+                {/* </Context.Provider> */}
               </Approval>
             }/>
           </Routes>
         </Layout>
+        </Context.Provider>
       </AuthContext.Provider>
     </Router>
   )

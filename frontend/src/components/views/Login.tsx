@@ -61,11 +61,7 @@ const Login: React.FC = () =>{
                 setLoginstate(true)
                 setCurrentUser(res.data.data)
                 setUserid(res.data.data.id)
-                
-                
-                
-                
-                
+                                
             }else{
 
             }
@@ -74,6 +70,10 @@ const Login: React.FC = () =>{
             console.log(error)
         }
     }
+    useEffect(()=>{
+        
+       console.log("AAA")
+    },[])
 
      useEffect (()=>{
         console.log("id")

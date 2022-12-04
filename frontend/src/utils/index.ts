@@ -27,3 +27,11 @@ export interface CalendarData{
     end: string
     todo: boolean
 }
+
+export interface ShareRoomData{
+    user1_id: number|null
+    user2_id: number|null
+    user3_id: number|null
+    room_name: string
+    password: string
+}
