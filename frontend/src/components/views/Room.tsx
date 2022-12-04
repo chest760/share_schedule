@@ -47,6 +47,8 @@ const Room:React.FC = () =>{
         }
     ]
 
+    var list:Array<eventType> = [] 
+
     const styles = useStyles()
     const [events, setEvents] = useState<Array<eventType>>([])
     const [events1, setEvents1] = useState<eventType>([{title:" ",start:" ",end:" ",color:" "}])
@@ -72,17 +74,42 @@ const Room:React.FC = () =>{
         try{
             console.log(roomid)
             const res = await getEventofAll(roomid)
-            console.log("get events")
-            if (res?.status === 200){
+            
+            if (res?.status === 200){ 
+                console.log("get events")
+                console.log(list)
+                // if(res?.data.data1 != null){
+                    
+                //     setEvents1(res?.data.data1)
+                // }
+                // if(res?.data.data2 != null){
+                //     setEvents2(res?.data.data2)
+                // }
+                // if(res?.data.data3 != null){
+                //     setEvents3(res?.data.data3)
+                // }
                 if(res?.data.data1 != null){
-                    setEvents1(res?.data.data1)
+                    for(const value of res?.data.data1){
+                        value.color = "red"
+                        list.push(value)
+                    }
                 }
                 if(res?.data.data2 != null){
-                    setEvents2(res?.data.data2)
+                    for(const value of res?.data.data2){
+                        value.color = "blue"
+                        list.push(value)
+                    }
                 }
                 if(res?.data.data3 != null){
-                    setEvents3(res?.data.data3)
+                    for(const value of res?.data.data3){
+                        value.color = "green"
+                        list.push(value)
+                    }
                 }
+                console.log(list)  
+                setEvents(list)
+
+ 
             }
         }catch(error){
         }
@@ -103,7 +130,8 @@ const Room:React.FC = () =>{
             title: title,
             start: startdate,
             end: enddate,
-            todo: todo   
+            todo: todo,
+            color:""   
         }
 
         try{
@@ -157,7 +185,9 @@ const Room:React.FC = () =>{
             title: title,
             start: startdate,
             end: enddate,
-            todo: todo   
+            todo: todo,
+            color:""
+
         }
 
         try{
@@ -230,12 +260,12 @@ const Room:React.FC = () =>{
             dayCellContent = {(e)=>{e.dayNumberText = e.dayNumberText.replace('日', '');}}
             selectable = {true}
             select = {(e) => handleselectdate(e)}
-            events = {events1.concat(events2,events3)}
+            events = {events}
             // eventClick={(e)=>{handleClickEvent(e)}}
             longPressDelay = {0}
             />
         )
-    },[events1,events2,events3])
+    },[events])
 
 
     return(

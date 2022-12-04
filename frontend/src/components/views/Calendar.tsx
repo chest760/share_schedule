@@ -88,7 +88,8 @@ const Calendar:React.FC = () =>{
             title: title,
             start: startdate,
             end: enddate,
-            todo: todo   
+            todo: todo, 
+            color:""  
         }
 
         try{
@@ -138,7 +139,8 @@ const Calendar:React.FC = () =>{
             title: title,
             start: startdate,
             end: enddate,
-            todo: todo   
+            todo: todo,
+            color: ""   
         }
 
         try{

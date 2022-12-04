@@ -26,6 +26,7 @@ export interface CalendarData{
     start: string
     end: string
     todo: boolean
+    color:string
 }
 
 export interface ShareRoomData{
