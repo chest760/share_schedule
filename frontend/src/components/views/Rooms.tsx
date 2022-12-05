@@ -4,6 +4,7 @@ import { AuthContext,Context } from "App";
 import { ShareRoomData} from "utils/index";
 import {enterRoom,makeRoom,getRoom} from  "lib/api/share";
 import { redirect, useNavigate } from "react-router-dom";
+import useSize from "utils/size";
 
 const useStyles = makeStyles((theme:Theme)=>({
     card:{
@@ -31,6 +32,7 @@ const Rooms:React.FC = () =>{
 
 
     const styles = useStyles()
+    const {isMobileSize} = useSize()
     const {userid,setUserid} = useContext(AuthContext)
     const {roomid,setRoomid,room_open,setRoom_Open} = useContext(Context)
     // const [roomid,setRoomid] = useState<number|null>(null)
@@ -140,103 +142,196 @@ const Rooms:React.FC = () =>{
 
 
     return(
-        <Grid container >
-            <Grid item xs ={8} style={{textAlign:"center"}}>
-                <Card className={styles.card}>
-                    <CardHeader
-                    titleTypographyProps={{variant:'h6' }}
-                    title="roomに入る"
-                    />
-                    <CardContent>
-                        <TextField
-                        required
-                        label = "room_name"
-                        fullWidth
-                        margin="normal"
-                        onChange={(event)=>{setEnterRoom_name(event.target.value)}}
+        <>
+        {!isMobileSize
+        ?   <Grid container style={{marginTop:"2rem"}}>
+                <Grid item xs ={8} style={{textAlign:"center"}}>
+                    <Card className={styles.card}>
+                        <CardHeader
+                        titleTypographyProps={{variant:'h6' }}
+                        title="roomに入る"
                         />
-                        <TextField
-                        required
-                        label = "password"
-                        fullWidth
-                        margin="normal"
-                        onChange = {(event)=>{setEnterPassword(event.target.value)}}
+                        <CardContent>
+                            <TextField
+                            required
+                            label = "room_name"
+                            fullWidth
+                            margin="normal"
+                            onChange={(event)=>{setEnterRoom_name(event.target.value)}}
+                            />
+                            <TextField
+                            required
+                            label = "password"
+                            fullWidth
+                            margin="normal"
+                            onChange = {(event)=>{setEnterPassword(event.target.value)}}
+                            />
+                            <Button
+                            type = "submit"
+                            variant="outlined"
+                            color = "primary"
+                            disabled={enterroom_name && enterpassword? false : true}
+                            onClick={(e)=>{EnterRoom(e)}}
+                            >
+                                入室
+                            </Button>
+                        </CardContent>
+                    </Card>
+                    <Card className={styles.card}>
+                        <CardHeader
+                        titleTypographyProps={{variant:'h6' }}
+                        title="room作成"
                         />
-                        <Button
-                        type = "submit"
-                        variant="outlined"
-                        color = "primary"
-                        disabled={enterroom_name && enterpassword? false : true}
-                        onClick={(e)=>{EnterRoom(e)}}
-                        >
-                            入室
-                        </Button>
-                    </CardContent>
-                </Card>
-                <Card className={styles.card}>
-                    <CardHeader
-                    titleTypographyProps={{variant:'h6' }}
-                    title="room作成"
-                    />
-                    <CardContent>
-                        <TextField
-                        required
-                        label = "room_name"
-                        fullWidth
-                        margin="normal"
-                        onChange={(event)=>{setMakeRoom_name(event.target.value)}}
-                        />
-                        <TextField
-                        required
-                        label = "password"
-                        fullWidth
-                        margin="normal"
-                        onChange = {(event)=>{setMakePassword(event.target.value)}}
-                        />
-                        <Button
-                        type = "submit"
-                        variant="outlined"
-                        color = "primary"
-                        disabled={makeroom_name && makepassword? false : true}
-                        onClick={(e)=>{MakeRoom(e)}}
-                        >
-                            作成
-                        </Button>
-                    </CardContent>
-                </Card>
-            </Grid>
-            <Grid item xs = {4} style={{textAlign:"center"}}>
-                <Card className={styles.card} style={{padding:10}}>
-                    Room List   
-                </Card>
+                        <CardContent>
+                            <TextField
+                            required
+                            label = "room_name"
+                            fullWidth
+                            margin="normal"
+                            onChange={(event)=>{setMakeRoom_name(event.target.value)}}
+                            />
+                            <TextField
+                            required
+                            label = "password"
+                            fullWidth
+                            margin="normal"
+                            onChange = {(event)=>{setMakePassword(event.target.value)}}
+                            />
+                            <Button
+                            type = "submit"
+                            variant="outlined"
+                            color = "primary"
+                            disabled={makeroom_name && makepassword? false : true}
+                            onClick={(e)=>{MakeRoom(e)}}
+                            >
+                                作成
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item xs = {4} style={{textAlign:"center"}}>
+                    <Card className={styles.card} style={{padding:10}}>
+                        Room List   
+                    </Card>
 
-                {/* <Button 
-                          type = "button"
-                          style={{marginTop:20, textTransform: 'none'}}
-                          onClick ={(e)=>{Link_to_Room (e,rooms[0])}}
-                        >ss
-                        </Button> */}
-                
-                {
-                    rooms.map((room:any, index:number)=>{
-                        return(
-                        <div key = {index} >
-                        <Button 
-                          type = "button"
-                          style={{marginTop:20, textTransform: 'none'}}
-                          onClick ={(e)=>{Link_to_Room(e,room)}}
-                        >
-                            <Card className={styles.roomcard}>
-                                {room.roomName}
-                            </Card>
-                        </Button>
-                        </div>
-                        )
-                    })
-                }
-                
+                    {/* <Button 
+                            type = "button"
+                            style={{marginTop:20, textTransform: 'none'}}
+                            onClick ={(e)=>{Link_to_Room (e,rooms[0])}}
+                            >ss
+                            </Button> */}
+                    
+                    {
+                        rooms.map((room:any, index:number)=>{
+                            return(
+                            <div key = {index} >
+                            <Button 
+                            type = "button"
+                            style={{marginTop:20, textTransform: 'none'}}
+                            onClick ={(e)=>{Link_to_Room(e,room)}}
+                            >
+                                <Card className={styles.roomcard}>
+                                    {room.roomName}
+                                </Card>
+                            </Button>
+                            </div>
+                            )
+                        })
+                    }
+                </Grid>
             </Grid>
-        </Grid>
+        :
+            <Grid container >
+                <Grid item xs = {12} style={{textAlign:"center"}}>
+                    <Card className={styles.card} style={{padding:10}}>
+                        Room List   
+                    </Card>
+                    
+                    {
+                        rooms.map((room:any, index:number)=>{
+                            return(
+                            <div key = {index} >
+                            <Button 
+                            type = "button"
+                            style={{marginTop:20, textTransform: 'none'}}
+                            onClick ={(e)=>{Link_to_Room(e,room)}}
+                            >
+                                <Card className={styles.roomcard}>
+                                    {room.roomName}
+                                </Card>
+                            </Button>
+                            </div>
+                            )
+                        })
+                    }
+                </Grid>
+                <Grid item xs ={12} style={{textAlign:"center"}}>
+                    <Card className={styles.card}>
+                        <CardHeader
+                        titleTypographyProps={{variant:'h6' }}
+                        title="roomに入る"
+                        />
+                        <CardContent>
+                            <TextField
+                            required
+                            label = "room_name"
+                            fullWidth
+                            margin="normal"
+                            onChange={(event)=>{setEnterRoom_name(event.target.value)}}
+                            />
+                            <TextField
+                            required
+                            label = "password"
+                            fullWidth
+                            margin="normal"
+                            onChange = {(event)=>{setEnterPassword(event.target.value)}}
+                            />
+                            <Button
+                            type = "submit"
+                            variant="outlined"
+                            color = "primary"
+                            disabled={enterroom_name && enterpassword? false : true}
+                            onClick={(e)=>{EnterRoom(e)}}
+                            >
+                                入室
+                            </Button>
+                        </CardContent>
+                    </Card>
+                    <Card className={styles.card}>
+                        <CardHeader
+                        titleTypographyProps={{variant:'h6' }}
+                        title="room作成"
+                        />
+                        <CardContent>
+                            <TextField
+                            required
+                            label = "room_name"
+                            fullWidth
+                            margin="normal"
+                            onChange={(event)=>{setMakeRoom_name(event.target.value)}}
+                            />
+                            <TextField
+                            required
+                            label = "password"
+                            fullWidth
+                            margin="normal"
+                            onChange = {(event)=>{setMakePassword(event.target.value)}}
+                            />
+                            <Button
+                            type = "submit"
+                            variant="outlined"
+                            color = "primary"
+                            disabled={makeroom_name && makepassword? false : true}
+                            onClick={(e)=>{MakeRoom(e)}}
+                            >
+                                作成
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+        }       
+        </>
     )
 }
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_04_175409) do
+ActiveRecord::Schema.define(version: 2022_12_05_101708) do
 
   create_table "calendars", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title"
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 2022_12_04_175409) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "uid"
     t.string "color"
+    t.boolean "all_day"
   end
 
   create_table "rooms", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

@@ -44,3 +44,11 @@ export const getEventofAll = (roomid: number) =>{
         "uid": Cookies.get("_uid")
     }})
 }
+
+export const deleteRoom = (id: string) => {
+    return  client.delete(`/room/${id}`, {headers:{
+            "access-token": Cookies.get("_access_token"),
+            "client": Cookies.get("_client"),
+            "uid": Cookies.get("_uid")
+        }})
+}

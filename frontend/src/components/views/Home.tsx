@@ -1,4 +1,4 @@
-import { Container, Grid, IconButton, makeStyles,Theme,Card,CardContent,Button, CardHeader } from "@material-ui/core";
+import { Container, Grid, IconButton, makeStyles,Theme,Card,CardContent,Button, CardHeader,useMediaQuery } from "@material-ui/core";
 import React,{useEffect,useContext,useState} from "react";
 import sample_img from "../../img/sample.jpg";
 import { AuthContext } from "App";
@@ -7,11 +7,12 @@ import { Link } from "react-router-dom";
 import SettingsIcon from '@material-ui/icons/Settings';
 import Modal from "react-modal";
 import { getEvent,deleteEvent } from "lib/api/get";
+import useSize from "utils/size";
 
 
 const useStyles = makeStyles((theme:Theme) => ({
     container : {
-        padding:"3rem"
+        padding:"1rem"
     },
     item :{
         textAlign:"center"
@@ -35,6 +36,7 @@ const useStyles = makeStyles((theme:Theme) => ({
 
 
 const Home: React.FC = () =>{
+    const {isMobileSize} = useSize()
 
     type eventType =[
         {
@@ -148,26 +150,25 @@ const Home: React.FC = () =>{
 
     return(
             <>
-
-                
-                <Grid container className={styles.container} style={{position: "relative", zIndex:1}}>
+            {!isMobileSize?
+                <Grid container className={styles.container} style={{position: "relative",margin:"auto", marginTop:"3rem",zIndex:1}}>
                 {todoevent?
                     <Alert />
                     :<></>} 
-                    <Grid item xs={4} style={{textAlign:"center"}}>
-                        <img src={sample_img} className={styles.image}/>
+                    <Grid item xs ={4} style={{textAlign:"center"}}>
+                        {/* <img src={sample_img} className={styles.image}/> */}
                         <table style={{margin:"auto",fontSize:"110%"}}>
                             <thead>
                                 <tr>
                                     <th style={{paddingRight : 40}}>名前 </th>
                                     <th style={{paddingRight : 20}}>{name}</th>
                                     <th>
-                                    <IconButton
+                                    {/* <IconButton
                                       component = {Link}
                                       to = "/edit"
                                     >
                                         <SettingsIcon />
-                                    </IconButton>
+                                    </IconButton> */}
                                     </th>
                                 </tr>
                             </thead>
@@ -211,6 +212,69 @@ const Home: React.FC = () =>{
                     }
                     </Grid>
                 </Grid>
+            :
+            <Grid container className={styles.container} style={{position: "relative", zIndex:1}}>
+                {todoevent?
+                    <Alert />
+                    :<></>} 
+                    <Grid item xs ={12} style={{textAlign:"center",marginBottom:20}}>
+                        {/* <img src={sample_img} className={styles.image}/> */}
+                        <table style={{margin:"auto",fontSize:"110%"}}>
+                            <thead>
+                                <tr>
+                                    <th style={{paddingRight : 40}}>名前 </th>
+                                    <th style={{paddingRight : 20}}>{name}</th>
+                                    <th>
+                                    {/* <IconButton
+                                      component = {Link}
+                                      to = "/edit"
+                                    >
+                                        <SettingsIcon />
+                                    </IconButton> */}
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </Grid>
+                    <Grid item xs ={12} className={styles.item}>
+                        <Card className={styles.roomcard} style={{marginBottom:30}}>
+                            To Do
+                        </Card>
+
+                    {
+                        events.map((event:any, index:number)=>{
+                            return(
+                                <div key = {index} >
+                                
+                                {event.todo?
+
+                                    <Button 
+                                    type = "button"
+                                    style={{marginTop:20, textTransform: 'none'}}
+                                    onClick ={(e)=>{
+                                        setTodo(event.title)
+                                        setTodoevent(true)
+                                        setId(event.id)
+                                    }}
+                                    >
+                                    <Card className={styles.roomcard}>
+                                        {event.title}
+                                        &nbsp;&nbsp;&nbsp;
+                                        {event.end.slice(5,7)+"月"}
+                                        {event.end.slice(8,10)+"日"}
+                                        &nbsp;
+                                        {event.end.slice(11,13)+"時"}
+                                        {event.end.slice(14,16)+"分"}
+                                    </Card>
+                                    </Button>
+                               :<></>}
+                            </div>
+                            )
+                        })
+                    }
+                    </Grid>
+                </Grid>
+            }
             </>
        
     )

@@ -85,7 +85,10 @@ const App: React.FC = () => {
     if(roomid != 0){
       return children
     }else{
-      return <Routes><Route path="/*" element={<Navigate to={`/home/${userid}`}/>}/></Routes>
+      return <Routes>
+        <Route path={`/rooms/0`} element={<Navigate to={`/rooms/${userid}`}/>}/>
+        <Route path="*" element={<Navigate to={`/home/${userid}`}/>}/>
+        </Routes>
     }
 
   }

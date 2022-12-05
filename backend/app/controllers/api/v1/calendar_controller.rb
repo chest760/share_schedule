@@ -19,7 +19,10 @@ class Api::V1::CalendarController < ApplicationController
 
     def create
         data = Calendar.new(user_params)
+        logger.debug("AAAAAAA")
+        logger.debug(user_params.inspect)
         data.uid = current_api_v1_user.id
+        # data.allDay = user_params[:all_day]
         logger.debug(data.inspect)
         if data.save!
             render json: {data: data}
@@ -54,7 +57,7 @@ class Api::V1::CalendarController < ApplicationController
     # end
 
     def user_params
-        params.permit(:title, :start, :end, :todo)
+        params.permit(:title, :start, :end, :todo,:color, :all_day)
     end
 
 end

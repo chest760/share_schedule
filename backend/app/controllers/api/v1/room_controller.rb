@@ -38,6 +38,15 @@ class Api::V1::RoomController < ApplicationController
 
     end
 
+    def destroy
+        data = Room.find(params[:id])
+        if data.destroy
+            render json:{data:data}
+        else
+            render json:{message:"error"}
+        end
+    end
+
     private
     def room_params
         params.permit(:user1_id, :user2_id, :user3_id, :password, :room_name)

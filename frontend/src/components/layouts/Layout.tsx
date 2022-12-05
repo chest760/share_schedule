@@ -5,7 +5,7 @@ import Header from "components/layouts/Header"
 
 const useStyles = makeStyles((thema:Theme)=>({
     container: {
-        paddingTop: "4rem"
+        paddingTop: "2rem"
     }
 }))
 

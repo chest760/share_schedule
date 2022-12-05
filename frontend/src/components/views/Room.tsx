@@ -4,12 +4,13 @@ import FullCalendar,{DateSelectArg, EventClickArg} from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid"; 
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { registerEvent, getEventofAll, updateEvent,deleteEvent } from "lib/api/get";
+import { registerEvent, getEventofAll, updateEvent,deleteEvent,deleteRoom } from "lib/api/get";
 import { CalendarData } from "utils/index";
 import { Style } from "@material-ui/icons";
 import { minutes,hours } from "utils/time";
 import { Console } from "console";
-import { Context } from "App";
+import { Context,AuthContext } from "App";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme:Theme)=>({
     root:{
@@ -50,10 +51,11 @@ const Room:React.FC = () =>{
     var list:Array<eventType> = [] 
 
     const styles = useStyles()
+    const navigate = useNavigate()
     const [events, setEvents] = useState<Array<eventType>>([])
-    const [events1, setEvents1] = useState<eventType>([{title:" ",start:" ",end:" ",color:" "}])
-    const [events2, setEvents2] = useState<eventType>([{title:" ",start:" ",end:" ",color:" "}])
-    const [events3, setEvents3] = useState<eventType>([{title:" ",start:" ",end:" ",color:" "}])
+    const [name1, setName1] = useState<string>("")
+    const [name2, setName2] = useState<string>("")
+    const [name3, setName3] = useState<string>("")
     const [selectStartData, setSelectStartData] = useState<string>("")
     const [selectEndData, setSelectEndData] = useState<string>("")
     const [todo,setTodo] = useState<boolean>(false)
@@ -66,41 +68,38 @@ const Room:React.FC = () =>{
     const [endhour, setEndHour] = useState<number>(0)
     const [endmin, setEndMin] = useState<number>(0)
     const [scheduleID, setScheduleID] = useState<string>("")
+    const [deleteAlert, setDeleteAlert] = useState<boolean>(false)
+    const [allDay, setAllDay] = useState<boolean>(true)
 
-    const {roomid} = useContext(Context)
+    const {roomid,setRoomid} = useContext(Context)
+    const {userid} = useContext(AuthContext)
 
 
     const handlegetEvent = async () =>{
         try{
             console.log(roomid)
             const res = await getEventofAll(roomid)
+            console.log(res.data)
             
             if (res?.status === 200){ 
                 console.log("get events")
                 console.log(list)
-                // if(res?.data.data1 != null){
-                    
-                //     setEvents1(res?.data.data1)
-                // }
-                // if(res?.data.data2 != null){
-                //     setEvents2(res?.data.data2)
-                // }
-                // if(res?.data.data3 != null){
-                //     setEvents3(res?.data.data3)
-                // }
                 if(res?.data.data1 != null){
+                    setName1(res.data.user1.name)
                     for(const value of res?.data.data1){
                         value.color = "red"
                         list.push(value)
                     }
                 }
                 if(res?.data.data2 != null){
+                    setName2(res.data.user2.name)
                     for(const value of res?.data.data2){
                         value.color = "blue"
                         list.push(value)
                     }
                 }
                 if(res?.data.data3 != null){
+                    setName3(res.data.user3.name)
                     for(const value of res?.data.data3){
                         value.color = "green"
                         list.push(value)
@@ -131,7 +130,8 @@ const Room:React.FC = () =>{
             start: startdate,
             end: enddate,
             todo: todo,
-            color:""   
+            color:"",
+            allDay:allDay   
         }
 
         try{
@@ -163,9 +163,6 @@ const Room:React.FC = () =>{
         setTitle(clickEvent.event._def.title)
         setScheduleID(clickEvent.event._def.publicId)
 
-        console.log(events1)
-        console.log(events2)
-        console.log(events3)
 
     }
 
@@ -186,7 +183,8 @@ const Room:React.FC = () =>{
             start: startdate,
             end: enddate,
             todo: todo,
-            color:""
+            color:"",
+            allDay:allDay
 
         }
 
@@ -244,6 +242,22 @@ const Room:React.FC = () =>{
     },[post]) 
 
 
+    const DeleteRoom = async (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
+        e.preventDefault()
+        try{
+            const res = await deleteRoom(String(roomid))
+            if (res.status===200){
+                setRoomid(0)
+                console.log(`/rooms/${userid}`)
+                navigate(`/rooms/${userid}`)
+
+            }
+        }catch(error){
+
+        }
+    }
+
+
     const Calendar = useCallback( () =>{
         return(
             <FullCalendar 
@@ -273,7 +287,60 @@ const Room:React.FC = () =>{
         <div style={screen || changescreen? {width:"100%",backgroundColor:"rgba(0,0,0,0.25)",paddingTop:"3rem",paddingBottom:"3rem"}
                            : {paddingTop:"3rem",paddingBottom:"3rem"}}>
             <div style={{position: "relative", zIndex:1}}>
+
+                <table style={{borderSpacing:10}}>
+                    <tr>
+                        <ul style={{margin:0}}>
+                        <td>
+                            <li style={{color:"red",fontSize:20}}><span style={{color:"black",fontSize:17,marginRight:30}}>{name1}</span></li>
+                        </td>
+                        <td>
+                            <li style={{color:"blue",fontSize:20}}><span style={{color:"black",fontSize:17,marginRight:30}}>{name2}</span></li>
+                        </td>
+                        <td>
+                            <li style={{color:"green",fontSize:20}}><span style={{color:"black",fontSize:17,marginRight:30}}>{name3}</span></li>
+                        </td>
+                        </ul>
+                    </tr>
+                </table>
+
                 <Calendar />
+                {!deleteAlert ?
+                    <div style={{marginTop:50,textAlign:"center"}}>
+                        <Button
+                            type="submit"
+                            variant="outlined"
+                            color="secondary"
+                            onClick={()=>{setDeleteAlert(true)}}
+                        >
+                            削除
+                        </Button>
+                    </div>
+                    :
+                    <div style={{marginTop:50,textAlign:"center"}}>
+                        <span style={{color:"red", marginRight:30}}>本当に削除しますか？</span>
+                        <Button
+                            type="submit"
+                            style={{marginRight:30}}
+                            variant="outlined"
+                            color="secondary"
+                            onClick={(e)=>{
+                                setDeleteAlert(false)
+                                DeleteRoom(e)
+                            }}
+                        >
+                            はい
+                        </Button>
+                        <Button
+                            type="submit"
+                            variant="outlined"
+                            color="secondary"
+                            onClick={()=>{setDeleteAlert(false)}}
+                        >
+                            いいえ
+                        </Button>
+                    </div>
+                }
             </div>
             {screen  && !changescreen ?
                 <div style={{position:"absolute",top:"60%",left:"50%",transform:"translate(-50%, -50%)",zIndex:2}}>
