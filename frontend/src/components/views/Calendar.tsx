@@ -234,40 +234,274 @@ const Calendar:React.FC = () =>{
 
     const Calendar = useCallback( () =>{
         return(
+            <>
+            {!isMobileSize
+            ?   <FullCalendar 
+                    plugins={[dayGridPlugin, timeGridPlugin,interactionPlugin]} 
+                    headerToolbar={{
+                        start: 'dayGridMonth,timeGridWeek',
+                        center: 'title',
+                        end: 'today prev,next'
+                    }}
+                    timeZone= 'Asia/Tokyo'
+                    locale= 'ja'
+                    initialView="dayGridMonth" 
+                    weekends={true}
+                    dayCellContent = {(e)=>{e.dayNumberText = e.dayNumberText.replace('日', '');}}
+                    selectable = {true}
+                    select = {(e) => handleselectdate(e)}
+                    events = {events}
+                    eventClick={(e)=>{handleClickEvent(e)}}
+                    longPressDelay = {0}
+                />
+            :   
             <FullCalendar 
-            plugins={[dayGridPlugin, timeGridPlugin,interactionPlugin]} 
-            headerToolbar={{
-                start: 'dayGridMonth,timeGridWeek',
-                center: 'title',
-                end: 'today prev,next'
-            }}
-            timeZone= 'Asia/Tokyo'
-            locale= 'ja'
-            initialView="dayGridMonth" 
-            weekends={true}
-            dayCellContent = {(e)=>{e.dayNumberText = e.dayNumberText.replace('日', '');}}
-            selectable = {true}
-            select = {(e) => handleselectdate(e)}
-            events = {events}
-            eventClick={(e)=>{handleClickEvent(e)}}
-            longPressDelay = {0}
+                plugins={[dayGridPlugin, timeGridPlugin,interactionPlugin]} 
+                headerToolbar={{
+                    start: 'title',
+                    
+                    end: 'today prev,next'
+                }}
+                timeZone= 'Asia/Tokyo'
+                locale= 'ja'
+                initialView="dayGridMonth" 
+                weekends={true}
+                dayCellContent = {(e)=>{e.dayNumberText = e.dayNumberText.replace('日', '');}}
+                selectable = {true}
+                select = {(e) => handleselectdate(e)}
+                events = {events}
+                eventClick={(e)=>{handleClickEvent(e)}}
+                longPressDelay = {0}
             />
+            }
+            </>
         )
     },[events])
 
 
     return(
         <>
-        <div style={screen || changescreen? {width:"100%",backgroundColor:"rgba(0,0,0,0.25)",paddingTop:"4rem",paddingBottom:"3rem"}
-                           : {paddingTop:"4rem",paddingBottom:"4rem"}}>
-            <div style={{position: "relative", zIndex:1}}>
-                <Calendar />
-            </div>
-            {screen  && !changescreen ?
-                <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%, -50%)",zIndex:2}}>
+        {!isMobileSize 
+        ?    <div style={screen || changescreen? {width:"100%",backgroundColor:"rgba(0,0,0,0.25)",paddingTop:"4rem",paddingBottom:"3rem"}
+                            : {paddingTop:"4rem",paddingBottom:"4rem"}}>
+                <div style={{position: "relative", zIndex:1}}>
+                    <Calendar />
+                </div>
+                {screen  && !changescreen ?
+                    <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%, -50%)",zIndex:2}}>
+                        <Card className={styles.card}>
+                            <CardHeader
+                                title= {selectStartData.slice(5,7)+"月"+selectStartData.slice(8,10)+"日"} 
+                                className={styles.header}
+                            />
+                            <CardContent>
+                                <div style={{display:"flex"}}>
+                                    <FormControl variant="outlined" margin="normal">
+                                        <InputLabel className={styles.content} style={{fontSize:12}}>hour</InputLabel>
+                                        <Select
+                                            className={styles.content}
+                                            value={starthour}
+                                            label="hour"
+                                            disabled ={allDay}
+                                            onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setStartHour(e.target.value as number)}}
+                                        >
+                                            {
+                                                hours.map((hour: string, index: number)=>
+                                                <MenuItem value={index} key={hour}>{hour}</MenuItem>
+                                                )
+                                            }
+                                        </Select>
+                                    </FormControl>
+
+                                    <span style={{paddingTop:"9%"}}>：</span>
+            
+                                    <FormControl variant="outlined" margin="normal">
+                                        <InputLabel className={styles.content} style={{fontSize:12}}>min</InputLabel>
+                                        <Select
+                                            className={styles.content}
+                                            value={startmin}
+                                            label="min"
+                                            disabled ={allDay}
+                                            onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setStartMin(e.target.value as number)}}
+                                        >
+                                            {
+                                                minutes.map((min: string, index:number)=>
+                                                <MenuItem value={index*10} key={min}>{min}</MenuItem>
+                                                )
+                                            }
+                                        </Select>
+                                    </FormControl>
+                            
+                                    <span style={{paddingTop:"9%"}}>〜</span>
+
+                                    <FormControl variant="outlined" margin="normal">
+                                        <InputLabel className={styles.content} style={{fontSize:12}}>hour</InputLabel>
+                                        <Select
+                                            className={styles.content}
+                                            value={endhour}
+                                            label="hour"
+                                            disabled ={allDay}
+                                            onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setEndHour(e.target.value as number)}}
+                                        >
+                                        {
+                                            hours.map((hour: string, index:number)=>
+                                            <MenuItem value={index} key={hour}>{hour}</MenuItem>
+                                            )
+                                        }
+                                        </Select>
+                                    </FormControl>
+                    
+                                    <span style={{paddingTop:"9%"}}>：</span>
+                            
+                                    <FormControl variant="outlined" margin="normal">
+                                        <InputLabel className={styles.content} style={{fontSize:12}}>min</InputLabel>
+                                        <Select
+                                            className={styles.content}
+                                            value={endmin}
+                                            label="min"
+                                            disabled ={allDay}
+                                            onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setEndMin(e.target.value as number)}}
+                                        >
+                                            {
+                                                minutes.map((min: string, index:number)=>
+                                                <MenuItem value={index*10} key={min}>{min}</MenuItem>
+                                                )
+                                            }
+                                        </Select>
+                                    </FormControl>
+                                </div>
+
+                                <TextField
+                                    required
+                                    margin="normal"
+                                    label = "Event"
+                                    fullWidth
+                                    onChange = {(e) => {setTitle(e.target.value)}}
+                                />
+
+                            <div style={{display:"flex", marginLeft:30,marginRight:30}}>
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: blue[800]}}
+                                        checked ={color==="blue"}
+                                        onChange={()=>{setColor("blue")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                            style={{color: red[800]}}
+                                            checked ={color==="red"}
+                                            onChange={()=>{setColor("red")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: green[800]}}
+                                        checked ={color==="green"}
+                                        onChange={()=>{setColor("green")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: purple[800]}}
+                                        checked ={color==="purple"}
+                                        onChange={()=>{setColor("purple")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: orange[800]}}
+                                        checked ={color==="orange"}
+                                        onChange={()=>{setColor("orange")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: yellow[800]}}
+                                        checked ={color==="yellow"}
+                                        onChange={()=>{setColor("yellow")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: pink[400]}}
+                                        checked ={color==="pink"}
+                                        onChange={()=>{setColor("pink")}}
+                                        />
+                                    } 
+                                    label=""
+                                /> 
+                            </div>
+
+                                <div style={{textAlign:"center",marginTop:20}}>
+                                    <FormControlLabel control={<Checkbox  onChange={()=>{setTodo(!todo) }} /> } label="Todo" />
+                                    <FormControlLabel control={<Checkbox  onChange={()=>{setAllDay(!allDay) }} defaultChecked /> } label="AllDay" />
+                                </div>
+
+                                <div style={{marginTop:20,display:"flex"}}>
+                                    <div style={{textAlign:"right"}}>
+                                        <Button
+                                            type="submit"
+                                            variant="outlined"
+                                            color =  "primary"
+                                            disabled={title ? false : true}
+                                            onClick={(e)=>{handlesubmit(e)}}
+                                        >
+                                            確定
+                                        </Button>
+                                    </div >
+                                    <div style={{textAlign:"left"}}>
+                                        <Button
+                                            type="submit"
+                                            variant="outlined"
+                                            color =  "primary"
+                                            onClick={()=>{ 
+                                                setScreen(false)
+                                                setStartHour(0)
+                                                setStartMin(0)
+                                                setEndHour(0)
+                                                setEndMin(0)
+                                                setTitle("")
+                                                setAllDay(true)
+                                            }}
+                                        >
+                                            閉じる
+                                        </Button>
+                                    </div>
+                                </div>
+                            </CardContent>
+                    </Card>
+                    </div>
+
+
+
+
+                : !screen  && changescreen ?
+                    <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%, -50%)",zIndex:2}}>
                     <Card className={styles.card}>
                         <CardHeader
-                            title= {selectStartData.slice(5,7)+"月"+selectStartData.slice(8,10)+"日"} 
+                            title = {selectStartData.slice(5,7)+"月"+selectStartData.slice(8,10)+"日"+"編集"}
                             className={styles.header}
                         />
                         <CardContent>
@@ -277,12 +511,12 @@ const Calendar:React.FC = () =>{
                                     <Select
                                         className={styles.content}
                                         value={starthour}
-                                        label="hour"
                                         disabled ={allDay}
+                                        label="hour"
                                         onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setStartHour(e.target.value as number)}}
                                     >
                                         {
-                                            hours.map((hour: string, index: number)=>
+                                            hours.map((hour: string, index:number)=>
                                             <MenuItem value={index} key={hour}>{hour}</MenuItem>
                                             )
                                         }
@@ -290,14 +524,14 @@ const Calendar:React.FC = () =>{
                                 </FormControl>
 
                                 <span style={{paddingTop:"9%"}}>：</span>
-        
+
                                 <FormControl variant="outlined" margin="normal">
                                     <InputLabel className={styles.content} style={{fontSize:12}}>min</InputLabel>
                                     <Select
                                         className={styles.content}
                                         value={startmin}
-                                        label="min"
                                         disabled ={allDay}
+                                        label="min"
                                         onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setStartMin(e.target.value as number)}}
                                     >
                                         {
@@ -315,8 +549,8 @@ const Calendar:React.FC = () =>{
                                     <Select
                                         className={styles.content}
                                         value={endhour}
-                                        label="hour"
                                         disabled ={allDay}
+                                        label="hour"
                                         onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setEndHour(e.target.value as number)}}
                                     >
                                     {
@@ -334,8 +568,8 @@ const Calendar:React.FC = () =>{
                                     <Select
                                         className={styles.content}
                                         value={endmin}
-                                        label="min"
                                         disabled ={allDay}
+                                        label="min"
                                         onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setEndMin(e.target.value as number)}}
                                     >
                                         {
@@ -350,89 +584,90 @@ const Calendar:React.FC = () =>{
                             <TextField
                                 required
                                 margin="normal"
-                                label = "Event"
+                                label = {title}
                                 fullWidth
                                 onChange = {(e) => {setTitle(e.target.value)}}
                             />
 
-                        <div style={{display:"flex", marginLeft:30,marginRight:30}}>
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                    style={{color: blue[800]}}
-                                    checked ={color==="blue"}
-                                    onChange={()=>{setColor("blue")}}
-                                    />
-                                } 
-                                label=""
-                            />
+                            <div style={{display:"flex", marginLeft:30,marginRight:30}}>
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: blue[800]}}
+                                        checked ={color==="blue"}
+                                        onChange={()=>{setColor("blue")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
 
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                        style={{color: red[800]}}
-                                        checked ={color==="red"}
-                                        onChange={()=>{setColor("red")}}
-                                    />
-                                } 
-                                label=""
-                            />
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                    style={{color: green[800]}}
-                                    checked ={color==="green"}
-                                    onChange={()=>{setColor("green")}}
-                                    />
-                                } 
-                                label=""
-                            />
-                            
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                    style={{color: purple[800]}}
-                                    checked ={color==="purple"}
-                                    onChange={()=>{setColor("purple")}}
-                                    />
-                                } 
-                                label=""
-                            />
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                    style={{color: orange[800]}}
-                                    checked ={color==="orange"}
-                                    onChange={()=>{setColor("orange")}}
-                                    />
-                                } 
-                                label=""
-                            />
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                    style={{color: yellow[800]}}
-                                    checked ={color==="yellow"}
-                                    onChange={()=>{setColor("yellow")}}
-                                    />
-                                } 
-                                label=""
-                            />
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                    style={{color: pink[400]}}
-                                    checked ={color==="pink"}
-                                    onChange={()=>{setColor("pink")}}
-                                    />
-                                } 
-                                label=""
-                            /> 
-                        </div>
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                            style={{color: red[800]}}
+                                            checked ={color==="red"}
+                                            onChange={()=>{setColor("red")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: green[800]}}
+                                        checked ={color==="green"}
+                                        onChange={()=>{setColor("green")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: purple[800]}}
+                                        checked ={color==="purple"}
+                                        onChange={()=>{setColor("purple")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: orange[800]}}
+                                        checked ={color==="orange"}
+                                        onChange={()=>{setColor("orange")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: yellow[800]}}
+                                        checked ={color==="yellow"}
+                                        onChange={()=>{setColor("yellow")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: pink[400]}}
+                                        checked ={color==="pink"}
+                                        onChange={()=>{setColor("pink")}}
+                                        />
+                                    } 
+                                    label=""
+                                /> 
+                            </div>
 
                             <div style={{textAlign:"center",marginTop:20}}>
                                 <FormControlLabel control={<Checkbox  onChange={()=>{setTodo(!todo) }} /> } label="Todo" />
-                                <FormControlLabel control={<Checkbox  onChange={()=>{setAllDay(!allDay) }} defaultChecked /> } label="AllDay" />
+                                {/* <FormControlLabel control={<Checkbox  onChange={()=>{setAllDay(!allDay)}} defaultChecked={false} /> } label="AllDay" /> */}
+                                <Check  />
                             </div>
 
                             <div style={{marginTop:20,display:"flex"}}>
@@ -442,9 +677,20 @@ const Calendar:React.FC = () =>{
                                         variant="outlined"
                                         color =  "primary"
                                         disabled={title ? false : true}
-                                        onClick={(e)=>{handlesubmit(e)}}
+                                        onClick={(e)=>{handleEditEvent(e)}}
                                     >
                                         確定
+                                    </Button>
+                                </div >
+                                <div style={{textAlign:"right"}}>
+                                    <Button
+                                        type="submit"
+                                        variant="outlined"
+                                        color =  "primary"
+                                        disabled={title ? false : true}
+                                        onClick={(e)=>{handleDeleteEvent(e)}}
+                                    >
+                                        削除
                                     </Button>
                                 </div >
                                 <div style={{textAlign:"left"}}>
@@ -453,7 +699,7 @@ const Calendar:React.FC = () =>{
                                         variant="outlined"
                                         color =  "primary"
                                         onClick={()=>{ 
-                                            setScreen(false)
+                                            setChangeScreen(false)
                                             setStartHour(0)
                                             setStartMin(0)
                                             setEndHour(0)
@@ -467,233 +713,456 @@ const Calendar:React.FC = () =>{
                                 </div>
                             </div>
                         </CardContent>
-                   </Card>
+                    </Card>
+                    </div>
+                :<></>
+                }            
+            </div>
+            
+        :
+        <div style={screen || changescreen? {width:"100%",backgroundColor:"rgba(0,0,0,0.25)",paddingTop:"4rem",paddingBottom:"3rem"}
+                            : {paddingTop:"4rem",paddingBottom:"4rem"}}>
+                <div style={{position: "relative", zIndex:1}}>
+                    <Calendar />
                 </div>
+                {screen  && !changescreen ?
+                    <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%, -50%)",zIndex:2}}>
+                        <Card style={{maxWidth:270, minWidth:250}}>
+                            <CardHeader
+                                title= {selectStartData.slice(5,7)+"月"+selectStartData.slice(8,10)+"日"} 
+                                className={styles.header}
+                            />
+                            <CardContent style={{marginTop:-20}}>
+                                <div style={{display:"flex",marginLeft:27}}>
+                                    <FormControl variant="outlined" margin="normal">
+                                        <InputLabel className={styles.content} style={{fontSize:12}}>hour</InputLabel>
+                                        <Select
+                                            className={styles.content}
+                                            value={starthour}
+                                            label="hour"
+                                            disabled ={allDay}
+                                            onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setStartHour(e.target.value as number)}}
+                                        >
+                                            {
+                                                hours.map((hour: string, index: number)=>
+                                                <MenuItem value={index} key={hour}>{hour}</MenuItem>
+                                                )
+                                            }
+                                        </Select>
+                                    </FormControl>
+
+                                    <span style={{paddingTop:"15%"}}>：</span>
+            
+                                    <FormControl variant="outlined" margin="normal">
+                                        <InputLabel className={styles.content} style={{fontSize:12}}>min</InputLabel>
+                                        <Select
+                                            className={styles.content}
+                                            value={startmin}
+                                            label="min"
+                                            disabled ={allDay}
+                                            onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setStartMin(e.target.value as number)}}
+                                        >
+                                            {
+                                                minutes.map((min: string, index:number)=>
+                                                <MenuItem value={index*10} key={min}>{min}</MenuItem>
+                                                )
+                                            }
+                                        </Select>
+                                    </FormControl>
+                            
+                                    </div>
+                                    <div style={{paddingLeft:'48%', transform:'rotate(90deg)',fontSize:'1.2rem'}}>〜</div>
+                                    <div style={{display:"flex",marginLeft:28}}>
+
+                                    <FormControl variant="outlined" margin="normal">
+                                        <InputLabel className={styles.content} style={{fontSize:12}}>hour</InputLabel>
+                                        <Select
+                                            className={styles.content}
+                                            value={endhour}
+                                            label="hour"
+                                            disabled ={allDay}
+                                            onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setEndHour(e.target.value as number)}}
+                                        >
+                                        {
+                                            hours.map((hour: string, index:number)=>
+                                            <MenuItem value={index} key={hour}>{hour}</MenuItem>
+                                            )
+                                        }
+                                        </Select>
+                                    </FormControl>
+                    
+                                    <span style={{paddingTop:"15%"}}>：</span>
+                            
+                                    <FormControl variant="outlined" margin="normal">
+                                        <InputLabel className={styles.content} style={{fontSize:12}}>min</InputLabel>
+                                        <Select
+                                            className={styles.content}
+                                            value={endmin}
+                                            label="min"
+                                            disabled ={allDay}
+                                            onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setEndMin(e.target.value as number)}}
+                                        >
+                                            {
+                                                minutes.map((min: string, index:number)=>
+                                                <MenuItem value={index*10} key={min}>{min}</MenuItem>
+                                                )
+                                            }
+                                        </Select>
+                                    </FormControl>
+                                </div>
+
+                                <TextField
+                                    required
+                                    margin="normal"
+                                    label = "Event"
+                                    fullWidth
+                                    onChange = {(e) => {setTitle(e.target.value)}}
+                                />
+
+                            <div style={{display:"flex", marginLeft:30,marginRight:30}}>
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: blue[800]}}
+                                        checked ={color==="blue"}
+                                        onChange={()=>{setColor("blue")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                            style={{color: red[800]}}
+                                            checked ={color==="red"}
+                                            onChange={()=>{setColor("red")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: green[800]}}
+                                        checked ={color==="green"}
+                                        onChange={()=>{setColor("green")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                </div>
+                                <div style={{display:"flex", marginLeft:30,marginRight:30}}>
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: purple[800]}}
+                                        checked ={color==="purple"}
+                                        onChange={()=>{setColor("purple")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: orange[800]}}
+                                        checked ={color==="orange"}
+                                        onChange={()=>{setColor("orange")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: yellow[800]}}
+                                        checked ={color==="yellow"}
+                                        onChange={()=>{setColor("yellow")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: pink[400]}}
+                                        checked ={color==="pink"}
+                                        onChange={()=>{setColor("pink")}}
+                                        />
+                                    } 
+                                    label=""
+                                /> 
+                            </div>
+
+                                <div style={{textAlign:"center",marginTop:20}}>
+                                    <FormControlLabel control={<Checkbox  onChange={()=>{setTodo(!todo) }} /> } label="Todo" />
+                                    <FormControlLabel control={<Checkbox  onChange={()=>{setAllDay(!allDay) }} defaultChecked /> } label="AllDay" />
+                                </div>
+
+                                <div style={{marginTop:20,display:"flex"}}>
+                                    <div style={{textAlign:"right"}}>
+                                        <Button
+                                            type="submit"
+                                            variant="outlined"
+                                            color =  "primary"
+                                            disabled={title ? false : true}
+                                            onClick={(e)=>{handlesubmit(e)}}
+                                        >
+                                            確定
+                                        </Button>
+                                    </div >
+                                    <div style={{textAlign:"left"}}>
+                                        <Button
+                                            type="submit"
+                                            variant="outlined"
+                                            color =  "primary"
+                                            onClick={()=>{ 
+                                                setScreen(false)
+                                                setStartHour(0)
+                                                setStartMin(0)
+                                                setEndHour(0)
+                                                setEndMin(0)
+                                                setTitle("")
+                                                setAllDay(true)
+                                            }}
+                                        >
+                                            閉じる
+                                        </Button>
+                                    </div>
+                                </div>
+                            </CardContent>
+                    </Card>
+                    </div>
 
 
 
 
-            : !screen  && changescreen ?
-                <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%, -50%)",zIndex:2}}>
-                <Card className={styles.card}>
-                    <CardHeader
-                        title = {selectStartData.slice(5,7)+"月"+selectStartData.slice(8,10)+"日"+"編集"}
-                        className={styles.header}
-                    />
-                    <CardContent>
-                        <div style={{display:"flex"}}>
-                            <FormControl variant="outlined" margin="normal">
-                                <InputLabel className={styles.content} style={{fontSize:12}}>hour</InputLabel>
-                                <Select
-                                    className={styles.content}
-                                    value={starthour}
-                                    disabled ={allDay}
-                                    label="hour"
-                                    onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setStartHour(e.target.value as number)}}
-                                >
+                : !screen  && changescreen ?
+                    <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%, -50%)",zIndex:2}}>
+                    <Card style={{maxWidth:270, minWidth:250}}>
+                        <CardHeader
+                            title = {selectStartData.slice(5,7)+"月"+selectStartData.slice(8,10)+"日"+"編集"}
+                            className={styles.header}
+                        />
+                        <CardContent style={{marginTop:-20}}>
+                            <div style={{display:"flex",marginLeft:27}}>
+                                <FormControl variant="outlined" margin="normal">
+                                    <InputLabel className={styles.content} style={{fontSize:12}}>hour</InputLabel>
+                                    <Select
+                                        className={styles.content}
+                                        value={starthour}
+                                        disabled ={allDay}
+                                        label="hour"
+                                        onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setStartHour(e.target.value as number)}}
+                                    >
+                                        {
+                                            hours.map((hour: string, index:number)=>
+                                            <MenuItem value={index} key={hour}>{hour}</MenuItem>
+                                            )
+                                        }
+                                    </Select>
+                                </FormControl>
+
+                                <span style={{paddingTop:"15%"}}>：</span>
+
+                                <FormControl variant="outlined" margin="normal">
+                                    <InputLabel className={styles.content} style={{fontSize:12}}>min</InputLabel>
+                                    <Select
+                                        className={styles.content}
+                                        value={startmin}
+                                        disabled ={allDay}
+                                        label="min"
+                                        onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setStartMin(e.target.value as number)}}
+                                    >
+                                        {
+                                            minutes.map((min: string, index:number)=>
+                                            <MenuItem value={index*10} key={min}>{min}</MenuItem>
+                                            )
+                                        }
+                                    </Select>
+                                </FormControl>
+                                </div>
+                                <div style={{paddingLeft:'48%', transform:'rotate(90deg)',fontSize:'1.2rem'}}>〜</div>
+                                <div style={{display:"flex",marginLeft:27}}>
+                                
+
+                                <FormControl variant="outlined" margin="normal">
+                                    <InputLabel className={styles.content} style={{fontSize:12}}>hour</InputLabel>
+                                    <Select
+                                        className={styles.content}
+                                        value={endhour}
+                                        disabled ={allDay}
+                                        label="hour"
+                                        onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setEndHour(e.target.value as number)}}
+                                    >
                                     {
                                         hours.map((hour: string, index:number)=>
                                         <MenuItem value={index} key={hour}>{hour}</MenuItem>
                                         )
                                     }
-                                </Select>
-                            </FormControl>
-
-                            <span style={{paddingTop:"9%"}}>：</span>
-
-                            <FormControl variant="outlined" margin="normal">
-                                <InputLabel className={styles.content} style={{fontSize:12}}>min</InputLabel>
-                                <Select
-                                    className={styles.content}
-                                    value={startmin}
-                                    disabled ={allDay}
-                                    label="min"
-                                    onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setStartMin(e.target.value as number)}}
-                                >
-                                    {
-                                        minutes.map((min: string, index:number)=>
-                                        <MenuItem value={index*10} key={min}>{min}</MenuItem>
-                                        )
-                                    }
-                                </Select>
-                            </FormControl>
-                    
-                            <span style={{paddingTop:"9%"}}>〜</span>
-
-                            <FormControl variant="outlined" margin="normal">
-                                <InputLabel className={styles.content} style={{fontSize:12}}>hour</InputLabel>
-                                <Select
-                                    className={styles.content}
-                                    value={endhour}
-                                    disabled ={allDay}
-                                    label="hour"
-                                    onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setEndHour(e.target.value as number)}}
-                                >
-                                {
-                                    hours.map((hour: string, index:number)=>
-                                    <MenuItem value={index} key={hour}>{hour}</MenuItem>
-                                    )
-                                }
-                                </Select>
-                            </FormControl>
-            
-                            <span style={{paddingTop:"9%"}}>：</span>
-                    
-                            <FormControl variant="outlined" margin="normal">
-                                <InputLabel className={styles.content} style={{fontSize:12}}>min</InputLabel>
-                                <Select
-                                    className={styles.content}
-                                    value={endmin}
-                                    disabled ={allDay}
-                                    label="min"
-                                    onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setEndMin(e.target.value as number)}}
-                                >
-                                    {
-                                        minutes.map((min: string, index:number)=>
-                                        <MenuItem value={index*10} key={min}>{min}</MenuItem>
-                                        )
-                                    }
-                                </Select>
-                            </FormControl>
-                        </div>
-
-                        <TextField
-                            required
-                            margin="normal"
-                            label = {title}
-                            fullWidth
-                            onChange = {(e) => {setTitle(e.target.value)}}
-                        />
-
-                        <div style={{display:"flex", marginLeft:30,marginRight:30}}>
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                    style={{color: blue[800]}}
-                                    checked ={color==="blue"}
-                                    onChange={()=>{setColor("blue")}}
-                                    />
-                                } 
-                                label=""
-                            />
-
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                        style={{color: red[800]}}
-                                        checked ={color==="red"}
-                                        onChange={()=>{setColor("red")}}
-                                    />
-                                } 
-                                label=""
-                            />
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                    style={{color: green[800]}}
-                                    checked ={color==="green"}
-                                    onChange={()=>{setColor("green")}}
-                                    />
-                                } 
-                                label=""
-                            />
-                            
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                    style={{color: purple[800]}}
-                                    checked ={color==="purple"}
-                                    onChange={()=>{setColor("purple")}}
-                                    />
-                                } 
-                                label=""
-                            />
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                    style={{color: orange[800]}}
-                                    checked ={color==="orange"}
-                                    onChange={()=>{setColor("orange")}}
-                                    />
-                                } 
-                                label=""
-                            />
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                    style={{color: yellow[800]}}
-                                    checked ={color==="yellow"}
-                                    onChange={()=>{setColor("yellow")}}
-                                    />
-                                } 
-                                label=""
-                            />
-                            <FormControlLabel 
-                                control={
-                                    <Radio
-                                    style={{color: pink[400]}}
-                                    checked ={color==="pink"}
-                                    onChange={()=>{setColor("pink")}}
-                                    />
-                                } 
-                                label=""
-                            /> 
-                        </div>
-
-                        <div style={{textAlign:"center",marginTop:20}}>
-                            <FormControlLabel control={<Checkbox  onChange={()=>{setTodo(!todo) }} /> } label="Todo" />
-                            {/* <FormControlLabel control={<Checkbox  onChange={()=>{setAllDay(!allDay)}} defaultChecked={false} /> } label="AllDay" /> */}
-                            <Check  />
-                        </div>
-
-                        <div style={{marginTop:20,display:"flex"}}>
-                            <div style={{textAlign:"right"}}>
-                                <Button
-                                    type="submit"
-                                    variant="outlined"
-                                    color =  "primary"
-                                    disabled={title ? false : true}
-                                    onClick={(e)=>{handleEditEvent(e)}}
-                                >
-                                    確定
-                                </Button>
-                            </div >
-                            <div style={{textAlign:"right"}}>
-                                <Button
-                                    type="submit"
-                                    variant="outlined"
-                                    color =  "primary"
-                                    disabled={title ? false : true}
-                                    onClick={(e)=>{handleDeleteEvent(e)}}
-                                >
-                                    削除
-                                </Button>
-                            </div >
-                            <div style={{textAlign:"left"}}>
-                                <Button
-                                    type="submit"
-                                    variant="outlined"
-                                    color =  "primary"
-                                    onClick={()=>{ 
-                                        setChangeScreen(false)
-                                        setStartHour(0)
-                                        setStartMin(0)
-                                        setEndHour(0)
-                                        setEndMin(0)
-                                        setTitle("")
-                                        setAllDay(true)
-                                    }}
-                                >
-                                    閉じる
-                                </Button>
+                                    </Select>
+                                </FormControl>
+                
+                                <span style={{paddingTop:"15%"}}>：</span>
+                        
+                                <FormControl variant="outlined" margin="normal">
+                                    <InputLabel className={styles.content} style={{fontSize:12}}>min</InputLabel>
+                                    <Select
+                                        className={styles.content}
+                                        value={endmin}
+                                        disabled ={allDay}
+                                        label="min"
+                                        onChange={(e:React.ChangeEvent<{ value: unknown }>)=>{setEndMin(e.target.value as number)}}
+                                    >
+                                        {
+                                            minutes.map((min: string, index:number)=>
+                                            <MenuItem value={index*10} key={min}>{min}</MenuItem>
+                                            )
+                                        }
+                                    </Select>
+                                </FormControl>
                             </div>
-                        </div>
-                    </CardContent>
-                </Card>
-                </div>
-            :<></>
-            }            
-        </div>
+
+                            <TextField
+                                required
+                                margin="normal"
+                                label = {title}
+                                fullWidth
+                                onChange = {(e) => {setTitle(e.target.value)}}
+                            />
+
+                            <div style={{display:"flex", marginLeft:30,marginRight:30}}>
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: blue[800]}}
+                                        checked ={color==="blue"}
+                                        onChange={()=>{setColor("blue")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                            style={{color: red[800]}}
+                                            checked ={color==="red"}
+                                            onChange={()=>{setColor("red")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: green[800]}}
+                                        checked ={color==="green"}
+                                        onChange={()=>{setColor("green")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                </div>
+                                <div style={{display:"flex", marginLeft:30,marginRight:30}}>
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: purple[800]}}
+                                        checked ={color==="purple"}
+                                        onChange={()=>{setColor("purple")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: orange[800]}}
+                                        checked ={color==="orange"}
+                                        onChange={()=>{setColor("orange")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: yellow[800]}}
+                                        checked ={color==="yellow"}
+                                        onChange={()=>{setColor("yellow")}}
+                                        />
+                                    } 
+                                    label=""
+                                />
+                                <FormControlLabel 
+                                    control={
+                                        <Radio
+                                        style={{color: pink[400]}}
+                                        checked ={color==="pink"}
+                                        onChange={()=>{setColor("pink")}}
+                                        />
+                                    } 
+                                    label=""
+                                /> 
+                            </div>
+
+                            <div style={{textAlign:"center",marginTop:20}}>
+                                <FormControlLabel control={<Checkbox  onChange={()=>{setTodo(!todo) }} /> } label="Todo" />
+                                {/* <FormControlLabel control={<Checkbox  onChange={()=>{setAllDay(!allDay)}} defaultChecked={false} /> } label="AllDay" /> */}
+                                <Check  />
+                            </div>
+
+                            <div style={{marginTop:20,display:"flex"}}>
+                                <div style={{textAlign:"right"}}>
+                                    <Button
+                                        type="submit"
+                                        variant="outlined"
+                                        color =  "primary"
+                                        disabled={title ? false : true}
+                                        onClick={(e)=>{handleEditEvent(e)}}
+                                    >
+                                        確定
+                                    </Button>
+                                </div >
+                                <div style={{textAlign:"right"}}>
+                                    <Button
+                                        type="submit"
+                                        variant="outlined"
+                                        color =  "primary"
+                                        disabled={title ? false : true}
+                                        onClick={(e)=>{handleDeleteEvent(e)}}
+                                    >
+                                        削除
+                                    </Button>
+                                </div >
+                                <div style={{textAlign:"left"}}>
+                                    <Button
+                                        type="submit"
+                                        variant="outlined"
+                                        color =  "primary"
+                                        onClick={()=>{ 
+                                            setChangeScreen(false)
+                                            setStartHour(0)
+                                            setStartMin(0)
+                                            setEndHour(0)
+                                            setEndMin(0)
+                                            setTitle("")
+                                            setAllDay(true)
+                                        }}
+                                    >
+                                        閉じる
+                                    </Button>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    </div>
+                :<></>
+                }            
+            </div>
+        }
         </>
     )
 }

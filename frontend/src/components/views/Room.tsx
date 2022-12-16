@@ -11,6 +11,7 @@ import { minutes,hours } from "utils/time";
 import { Console } from "console";
 import { Context,AuthContext } from "App";
 import { useNavigate } from "react-router-dom";
+import useSize from "utils/size";
 
 const useStyles = makeStyles((theme:Theme)=>({
     root:{
@@ -38,6 +39,7 @@ const useStyles = makeStyles((theme:Theme)=>({
 }))
 
 const Room:React.FC = () =>{
+    const {isMobileSize} = useSize()
     
     type eventType =[
         {
@@ -260,24 +262,47 @@ const Room:React.FC = () =>{
 
     const Calendar = useCallback( () =>{
         return(
-            <FullCalendar 
-            plugins={[dayGridPlugin, timeGridPlugin,interactionPlugin]} 
-            headerToolbar={{
-                start: 'dayGridMonth,timeGridWeek',
-                center: 'title',
-                end: 'today prev,next'
-            }}
-            timeZone= 'Asia/Tokyo'
-            locale= 'ja'
-            initialView="dayGridMonth" 
-            weekends={true}
-            dayCellContent = {(e)=>{e.dayNumberText = e.dayNumberText.replace('日', '');}}
-            selectable = {true}
-            select = {(e) => handleselectdate(e)}
-            events = {events}
-            // eventClick={(e)=>{handleClickEvent(e)}}
-            longPressDelay = {0}
+            <>
+            {!isMobileSize
+             ?   <FullCalendar 
+                    plugins={[dayGridPlugin, timeGridPlugin,interactionPlugin]} 
+                    headerToolbar={{
+                        start: 'dayGridMonth,timeGridWeek',
+                        center: 'title',
+                        end: 'today prev,next'
+                    }}
+                    timeZone= 'Asia/Tokyo'
+                    locale= 'ja'
+                    initialView="dayGridMonth" 
+                    weekends={true}
+                    dayCellContent = {(e)=>{e.dayNumberText = e.dayNumberText.replace('日', '');}}
+                    // selectable = {true}
+                    select = {(e) => handleselectdate(e)}
+                    events = {events}
+                    // eventClick={(e)=>{handleClickEvent(e)}}
+                    longPressDelay = {0}
+                />
+                :
+                <FullCalendar 
+                plugins={[dayGridPlugin, timeGridPlugin,interactionPlugin]} 
+                headerToolbar={{
+                    start: 'title',
+                    
+                    end: 'today prev,next'
+                }}
+                timeZone= 'Asia/Tokyo'
+                locale= 'ja'
+                initialView="dayGridMonth" 
+                weekends={true}
+                dayCellContent = {(e)=>{e.dayNumberText = e.dayNumberText.replace('日', '');}}
+                // selectable = {true}
+                select = {(e) => handleselectdate(e)}
+                events = {events}
+                // eventClick={(e)=>{handleClickEvent(e)}}
+                longPressDelay = {0}
             />
+            }
+            </>
         )
     },[events])
 

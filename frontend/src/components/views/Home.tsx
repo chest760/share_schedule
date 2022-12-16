@@ -84,7 +84,7 @@ const Home: React.FC = () =>{
     
     const Alert = () =>{
         return(
-            <Card style={{maxWidth:350,margin:"auto",top:"20%",position: "absolute",left:"50%",transform:"translate(-50%, -50%)", zIndex:2,paddingLeft:20,paddingRight:20}}>
+            <Card style={{maxWidth:350,margin:"auto",marginTop:30,top:"20%",position: "absolute",left:"50%",transform:"translate(-50%, -50%)", zIndex:2,paddingLeft:20,paddingRight:20}}>
                 <CardHeader
                 style={{textAlign:"center"}}
                 title={`'${todo}'は完了しましたか？`}
